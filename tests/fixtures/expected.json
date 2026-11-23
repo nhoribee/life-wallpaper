@@ -1,0 +1,36 @@
+{
+  "macbook": {
+    "generate/motif_snapshot/s42": "18d946ae80ce6f5925044428ee2c009346e8e5d3fc0d11402fc2f99e568c596c",
+    "generate/motif_snapshot/s7": "4491896bdf3186ed8ba37149b4aa294b0c565827060f78f1097685e452e4bdff",
+    "generate/motif_heatmap/s42": "0a6cb620d4e4d04ff6b16a6a4279ebcace5ce2216864938f27490653991fdcbd",
+    "generate/motif_heatmap/s7": "c140afaddf0888265f65162706680bd3a8ddd09038daa0f69984d42329f474c0",
+    "generate/random_heatmap/s42": "8d04b3d2da47f65d0e84ab2fab4b7c17ad129c7bc379b0dfa44f17470d142415",
+    "generate/random_heatmap/s7": "27659a8aae81e711f08d94e15a8dbe8416ba99e91f607d48a1ad138ddd67a01e",
+    "generate/pattern_snapshot/s42": "ef37f8d8ff0a3c1d2ba9af540009088ab553590b908d0e4a352d03c99324941f",
+    "generate/pattern_snapshot/s7": "ef37f8d8ff0a3c1d2ba9af540009088ab553590b908d0e4a352d03c99324941f",
+    "generate/motif_snapshot/s42/webp": "18d946ae80ce6f5925044428ee2c009346e8e5d3fc0d11402fc2f99e568c596c",
+    "generate/motif_snapshot/s42/gif": "fdd317042e7b881e8ce91d632f4ddd97f6489f85b8319edb041fc15cf247fb9b",
+    "generate/plain_gif/s42/gif": "0cb18d67832e82387f91571a21f35eea98e869eacc1f737cde85a2ba99fac832",
+    "generate/motif_snapshot/s42/video": "e56ba3e2f7547c4b5021f4ce4c4342d3e23d1b3ed1ca03cb3e65a5dce7478d2d",
+    "eca/eca_rule30/s42/video": "8bfdeabf635f510b9f7a33c9b11a40d812a484978cdb140837f694b302d125f5",
+    "eca/eca_rule30/s42": "4bcc872c549ad752ae2d8586927e80b6c6041b8511583d27efb33e51ff24bc7f",
+    "eca/eca_rule90/s42": "5c88dcccff17be53c8b000131ec6ae71ca4ffb0faf0f9a2ac2b52ff22a00cb49"
+  },
+  "320x200": {
+    "generate/motif_snapshot/s42": "b3c09a249ba1eea1aade820839bca214eab2a0cbf017bfbb05cde07ec792f8f4",
+    "generate/motif_snapshot/s7": "f598b5aa8e7d24e379bb36d344e4c4bc98974569f1e9c6850110f7db5ce7f1ab",
+    "generate/motif_heatmap/s42": "46ef78863ebf371913f068eaa9593370f66867ecf230f2d805acbd6cdb076ac0",
+    "generate/motif_heatmap/s7": "5246454c751c7ba22c495214309689cb2137b0549a861a39a3d988c8f8e3cd88",
+    "generate/random_heatmap/s42": "8a302b7f9bb049327091a5ae4a94bdd502e1089f673430b7e034998d23eb8ec4",
+    "generate/random_heatmap/s7": "76d31e07c964af6e3fdb6312dfb87903f66ca688519ca1b059c81c2be3dcd246",
+    "generate/pattern_snapshot/s42": "c55cf1b6ba5c3bb2d1d66a19ab92b55db56d75bac27c01b17d3681d522d560d5",
+    "generate/pattern_snapshot/s7": "c55cf1b6ba5c3bb2d1d66a19ab92b55db56d75bac27c01b17d3681d522d560d5",
+    "generate/motif_snapshot/s42/webp": "b3c09a249ba1eea1aade820839bca214eab2a0cbf017bfbb05cde07ec792f8f4",
+    "generate/motif_snapshot/s42/gif": "d291dbd74f7bccadc696f690caa595cfe837cc15e59ac2e2fa3861b3f9225539",
+    "generate/plain_gif/s42/gif": "65c821f65d1275984531982fb7ed3e24314355dc46823ce95265eeb8624a61cc",
+    "generate/motif_snapshot/s42/video": "147a3555957794e42a2f20c1523ce98eaf93b060a704171076d48551b7c76bcd",
+    "eca/eca_rule30/s42/video": "b6a872ee7e370f7e1ad96cc18b72049c1df9e0f007994641c16cc541d5780b21",
+    "eca/eca_rule30/s42": "9b488e688a7ea0f0543393dadae481f0bc5b366d4d2ca842047e3e242a5cf160",
+    "eca/eca_rule90/s42": "2142b7263ae9b8ad9b41a1de4845eca48c4b3ba97186af3e70f644a553c62264"
+  }
+}

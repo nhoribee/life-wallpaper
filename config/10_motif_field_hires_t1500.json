@@ -1,0 +1,14 @@
+{
+  "name": "motif_field_hires-3px_t1500",
+  "cell_size": 3,
+  "mode": "snapshot",
+  "steps": 1500,
+  "random_density": 0.0,
+  "color_by_motif": true,
+  "bg_color": [10, 10, 14],
+  "scatter": [
+    {"name": "r-pentomino", "per_10k": 7.6},
+    {"name": "acorn", "per_10k": 3.2},
+    {"name": "glider", "per_10k": 3.2}
+  ]
+}

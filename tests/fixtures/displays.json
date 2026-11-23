@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Built-in Retina Display",
+    "frame_width": 1512,
+    "frame_height": 982,
+    "scale": 2,
+    "current_image": "/Users/example/WallPaper/lifegame/motif_field_hires-3px_t1500_macbook_s42.png"
+  },
+  {
+    "id": 2,
+    "name": "External A",
+    "frame_width": 3840,
+    "frame_height": 1600,
+    "scale": 1,
+    "current_image": "/Users/example/WallPaper/lifegame/motif_field_t150_4k_s42.png"
+  },
+  {
+    "id": 3,
+    "name": "External B",
+    "frame_width": 1600,
+    "frame_height": 1000,
+    "scale": 1,
+    "current_image": null
+  }
+]

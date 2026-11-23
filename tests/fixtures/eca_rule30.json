@@ -1,0 +1,10 @@
+{
+  "name": "eca_rule30",
+  "rule": 30,
+  "cell_size": 4,
+  "init_seeds": 3,
+  "burn_in": 5,
+  "bg_color": [13, 10, 8],
+  "fg_color": [205, 125, 55],
+  "video": {"fps": 2, "duration_s": 2, "columns_per_frame": 2, "max_width": 160}
+}

@@ -1,0 +1,23 @@
+{
+  "name": "eca_class4_r110",
+  "rule": 110,
+  "cell_size": 8,
+  "init_density": 0.25,
+  "burn_in": 60,
+  "bg_color": [
+    9,
+    11,
+    20
+  ],
+  "fg_color": [
+    80,
+    140,
+    205
+  ],
+  "video": {
+    "fps": 30,
+    "duration_s": 120,
+    "columns_per_frame": 1,
+    "max_width": 1280
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "eca_nested_r90",
+  "rule": 90,
+  "cell_size": 8,
+  "init_seeds": 3,
+  "bg_color": [8, 12, 9],
+  "fg_color": [120, 235, 150],
+  "video": {
+    "fps": 30,
+    "duration_s": 120,
+    "columns_per_frame": 1,
+    "max_width": 1280
+  }
+}

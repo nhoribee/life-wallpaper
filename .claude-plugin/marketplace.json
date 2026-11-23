@@ -1,0 +1,12 @@
+{
+  "name": "life-wallpaper",
+  "owner": { "name": "nhoribee" },
+  "plugins": [
+    {
+      "name": "life-wallpaper",
+      "source": "./",
+      "description": "Game of Life wallpapers, one per connected display (macOS).",
+      "version": "0.1.0"
+    }
+  ]
+}

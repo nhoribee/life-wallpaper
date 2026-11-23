@@ -1,0 +1,9 @@
+{
+  "name": "random_snapshot",
+  "cell_size": 8,
+  "mode": "snapshot",
+  "steps": 250,
+  "random_density": 0.22,
+  "bg_color": [10, 10, 12],
+  "fg_color": [200, 220, 200]
+}

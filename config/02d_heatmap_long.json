@@ -1,0 +1,10 @@
+{
+  "name": "heatmap_long",
+  "cell_size": 4,
+  "mode": "activity",
+  "steps": 1000,
+  "random_density": 0.18,
+  "palette": "cyanotype",
+  "use_log": true,
+  "clip_percentile": 99.0
+}

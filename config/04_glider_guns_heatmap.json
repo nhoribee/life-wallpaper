@@ -1,0 +1,17 @@
+{
+  "name": "glider_guns",
+  "cell_size": 4,
+  "mode": "heatmap",
+  "steps": 800,
+  "random_density": 0.0,
+  "patterns": [
+    {"name": "gosper-glider-gun", "position": "top-left"},
+    {"name": "gosper-glider-gun", "position": "top-right", "mirror": true},
+    {"name": "gosper-glider-gun", "position": "bottom-left", "rotate": 2},
+    {"name": "gosper-glider-gun", "position": "bottom-right", "rotate": 2, "mirror": true},
+    {"name": "pulsar", "position": "center"}
+  ],
+  "palette": "phosphor",
+  "use_log": true,
+  "clip_percentile": 99.5
+}

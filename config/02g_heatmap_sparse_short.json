@@ -1,0 +1,10 @@
+{
+  "name": "heatmap_sparse_short",
+  "cell_size": 4,
+  "mode": "activity",
+  "steps": 300,
+  "random_density": 0.10,
+  "palette": "cyanotype",
+  "use_log": true,
+  "clip_percentile": 99.0
+}

@@ -1,0 +1,26 @@
+{
+  "name": "motif_colors",
+  "cell_size": 8,
+  "mode": "activity",
+  "steps": 800,
+  "random_density": 0.0,
+  "color_by_motif": true,
+  "bg_color": [10, 10, 14],
+  "patterns": [
+    {"name": "gosper-glider-gun", "position": "top-left"},
+    {"name": "gosper-glider-gun", "position": "top-right", "mirror": true},
+    {"name": "gosper-glider-gun", "position": "bottom-left", "rotate": 2},
+    {"name": "gosper-glider-gun", "position": "bottom-right", "rotate": 2, "mirror": true},
+    {"name": "pulsar", "position": "center"}
+  ],
+  "use_log": true,
+  "clip_percentile": 99.5,
+  "gif": {
+    "generations": 300,
+    "stride": 2,
+    "duration_ms": 60,
+    "max_width": 1280,
+    "trail": 0.85,
+    "hold_last_ms": 1500
+  }
+}

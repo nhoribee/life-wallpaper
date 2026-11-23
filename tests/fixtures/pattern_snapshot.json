@@ -1,0 +1,14 @@
+{
+  "name": "pattern_snapshot",
+  "cell_size": 7,
+  "mode": "snapshot",
+  "steps": 40,
+  "bg_color": [8, 12, 8],
+  "fg_color": [180, 240, 200],
+  "patterns": [
+    {"name": "gosper-glider-gun", "position": "top-left"},
+    {"name": "r-pentomino", "position": "center", "rotate": 1, "mirror": true},
+    {"name": "pentadecathlon", "position": [10, 20]},
+    {"name": "acorn", "position": "bottom-right"}
+  ]
+}

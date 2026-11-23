@@ -1,0 +1,24 @@
+{
+  "name": "motif_duel",
+  "cell_size": 8,
+  "mode": "snapshot",
+  "steps": 300,
+  "random_density": 0.0,
+  "color_by_motif": true,
+  "bg_color": [10, 10, 14],
+  "patterns": [
+    {"name": "r-pentomino", "position": "center"},
+    {"name": "acorn", "position": [30, 60]},
+    {"name": "acorn", "position": [-40, -80], "mirror": true},
+    {"name": "pentadecathlon", "position": [20, -60]},
+    {"name": "pulsar", "position": [-30, 80]}
+  ],
+  "gif": {
+    "generations": 360,
+    "stride": 2,
+    "duration_ms": 60,
+    "max_width": 1280,
+    "trail": 0.88,
+    "hold_last_ms": 1500
+  }
+}

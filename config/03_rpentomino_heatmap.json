@@ -1,0 +1,13 @@
+{
+  "name": "rpentomino_heatmap",
+  "cell_size": 4,
+  "mode": "activity",
+  "steps": 1103,
+  "random_density": 0.005,
+  "patterns": [
+    {"name": "r-pentomino", "position": "center"}
+  ],
+  "palette": "ember",
+  "use_log": true,
+  "clip_percentile": 99.0
+}

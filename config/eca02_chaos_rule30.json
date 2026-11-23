@@ -1,0 +1,22 @@
+{
+  "name": "eca_chaos_r30",
+  "rule": 30,
+  "cell_size": 8,
+  "init_seeds": 5,
+  "bg_color": [
+    13,
+    10,
+    8
+  ],
+  "fg_color": [
+    205,
+    125,
+    55
+  ],
+  "video": {
+    "fps": 30,
+    "duration_s": 120,
+    "columns_per_frame": 1,
+    "max_width": 1280
+  }
+}

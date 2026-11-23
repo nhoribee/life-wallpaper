@@ -1,0 +1,10 @@
+{
+  "name": "random_heatmap",
+  "cell_size": 6,
+  "mode": "survival",
+  "steps": 30,
+  "random_density": 0.3,
+  "palette": "ember",
+  "use_log": true,
+  "clip_percentile": 98.0
+}

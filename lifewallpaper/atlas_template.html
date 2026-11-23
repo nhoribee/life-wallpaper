@@ -1,0 +1,1225 @@
+<meta charset="utf-8">
+<title>Game of Life Pattern Atlas</title>
+<style>
+  @font-face {
+    font-family: 'Display';
+    src: local('Menlo'), local('Monaco'), local('Courier New');
+  }
+
+  :root {
+    --bg: #0a0c10;
+    --bg-card: #10131a;
+    --border: #1a1f2a;
+    --text: #c8cdd8;
+    --text-dim: #6a7085;
+    --text-bright: #e8ecf4;
+    --accent: #4a90d9;
+    --accent-dim: #2a5080;
+    --cell-alive: #4a90d9;
+    --cell-dead: #0d0f14;
+    --cell-grid: #141820;
+    --cat-still: #3d8b6e;
+    --cat-osc: #c4873b;
+    --cat-ship: #7b6abf;
+    --cat-gun: #c45c5c;
+    --cat-meth: #b8486e;
+    --cat-misc: #5a8fa8;
+  }
+
+  :root[data-theme="light"] {
+    --bg: #f0f1f4;
+    --bg-card: #ffffff;
+    --border: #d8dbe2;
+    --text: #3a3e4a;
+    --text-dim: #8a8ea0;
+    --text-bright: #1a1e2a;
+    --accent: #3070b8;
+    --accent-dim: #a0c0e0;
+    --cell-alive: #3070b8;
+    --cell-dead: #e8eaef;
+    --cell-grid: #dcdfe6;
+    --cat-still: #2a7858;
+    --cat-osc: #a06a20;
+    --cat-ship: #6050a0;
+    --cat-gun: #a84040;
+    --cat-meth: #983868;
+    --cat-misc: #407888;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f0f1f4;
+      --bg-card: #ffffff;
+      --border: #d8dbe2;
+      --text: #3a3e4a;
+      --text-dim: #8a8ea0;
+      --text-bright: #1a1e2a;
+      --accent: #3070b8;
+      --accent-dim: #a0c0e0;
+      --cell-alive: #3070b8;
+      --cell-dead: #e8eaef;
+      --cell-grid: #dcdfe6;
+      --cat-still: #2a7858;
+      --cat-osc: #a06a20;
+      --cat-ship: #6050a0;
+      --cat-gun: #a84040;
+      --cat-meth: #983868;
+      --cat-misc: #407888;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 2rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-family: 'Display', monospace;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    letter-spacing: 0.02em;
+    margin-bottom: 0.3rem;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-bottom: 2rem;
+    letter-spacing: 0.02em;
+  }
+
+  .controls {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .filter-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 0.3rem 0.7rem;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-family: inherit;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover { color: var(--text); border-color: var(--text-dim); }
+  .filter-btn.active { color: var(--accent); border-color: var(--accent); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+
+  .card:hover { border-color: var(--text-dim); }
+
+  .card canvas {
+    display: block;
+    width: 100%;
+    image-rendering: pixelated;
+    cursor: pointer;
+  }
+
+  .card-info {
+    padding: 0.6rem 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .card-name {
+    font-family: 'Display', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+
+  .card-meta {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .card-tag {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.1rem 0.35rem;
+    border-radius: 2px;
+    font-weight: 600;
+  }
+
+  .tag-still { color: var(--cat-still); background: color-mix(in srgb, var(--cat-still) 15%, transparent); }
+  .tag-oscillator { color: var(--cat-osc); background: color-mix(in srgb, var(--cat-osc) 15%, transparent); }
+  .tag-spaceship { color: var(--cat-ship); background: color-mix(in srgb, var(--cat-ship) 15%, transparent); }
+  .tag-gun { color: var(--cat-gun); background: color-mix(in srgb, var(--cat-gun) 15%, transparent); }
+  .tag-methuselah { color: var(--cat-meth); background: color-mix(in srgb, var(--cat-meth) 15%, transparent); }
+  .tag-misc { color: var(--cat-misc); background: color-mix(in srgb, var(--cat-misc) 15%, transparent); }
+
+  .card-desc {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.3rem;
+  }
+
+  .card-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 0.68rem;
+    font-family: 'Display', monospace;
+    letter-spacing: 0.03em;
+    transition: all 0.15s;
+  }
+
+  .card-btn:hover { color: var(--text); border-color: var(--text-dim); }
+
+  .legend {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  .section-title {
+    font-family: 'Display', monospace;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    letter-spacing: 0.02em;
+    margin: 2.5rem 0 0.3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .grid-configs {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  }
+
+  .tag-gif { color: var(--cat-meth); background: color-mix(in srgb, var(--cat-meth) 15%, transparent); }
+  .tag-mode { color: var(--cat-misc); background: color-mix(in srgb, var(--cat-misc) 15%, transparent); }
+  .tag-motif { color: var(--cat-still); background: color-mix(in srgb, var(--cat-still) 15%, transparent); }
+
+  .motif-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 0.7rem;
+    margin-bottom: 1.2rem;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    font-family: 'Display', monospace;
+  }
+  .motif-legend .chip { display: inline-flex; align-items: center; gap: 0.3rem; }
+  .motif-legend .sw {
+    width: 11px; height: 11px; border-radius: 2px; display: inline-block;
+    border: 1px solid var(--border);
+  }
+
+  .cfg-cmd {
+    font-family: 'Display', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.25rem 0.4rem;
+    margin-top: 0.3rem;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+</style>
+
+<h1>Game of Life Pattern Atlas</h1>
+<p class="subtitle">Conway's Game of Life — known patterns catalog. Click any pattern to pause/resume animation.</p>
+
+<div class="controls" id="controls"></div>
+<div class="grid" id="grid"></div>
+
+<h2 class="section-title">Wallpaper Configs</h2>
+<p class="subtitle">config/*.json のライブプレビュー（縮小グリッド・trail残像）。既知モチーフを認識してモチーフごとに色分け、未知の塊は chaos 色。実出力は各カードのコマンドで生成。</p>
+<div class="motif-legend" id="motifLegend"></div>
+<div class="grid grid-configs" id="configGrid"></div>
+
+<p class="legend">B3/S23 rules · torus boundary · click to pause/resume · config previews are downscaled live simulations</p>
+
+<script>
+const PATTERNS = [
+  // === Still Lifes ===
+  { name: "Block", category: "still", size: [4,4], period: 1,
+    cells: [[1,1],[1,2],[2,1],[2,2]],
+    desc: "最小の静物。2×2の正方形。" },
+  { name: "Beehive", category: "still", size: [6,5], period: 1,
+    cells: [[1,2],[1,3],[2,1],[2,4],[3,2],[3,3]],
+    desc: "6セルの静物。蜂の巣に似た六角形。" },
+  { name: "Loaf", category: "still", size: [6,6], period: 1,
+    cells: [[1,2],[1,3],[2,1],[2,4],[3,2],[3,4],[4,3]],
+    desc: "7セルの静物。パンの形。" },
+  { name: "Boat", category: "still", size: [5,5], period: 1,
+    cells: [[1,1],[1,2],[2,1],[2,3],[3,2]],
+    desc: "5セルの静物。小舟。" },
+  { name: "Tub", category: "still", size: [5,5], period: 1,
+    cells: [[1,2],[2,1],[2,3],[3,2]],
+    desc: "4セルの静物。浴槽。" },
+  { name: "Pond", category: "still", size: [6,6], period: 1,
+    cells: [[1,2],[1,3],[2,1],[2,4],[3,1],[3,4],[4,2],[4,3]],
+    desc: "8セルの静物。池。Beehiveの変種。" },
+  { name: "Ship", category: "still", size: [5,5], period: 1,
+    cells: [[1,1],[1,2],[2,1],[2,3],[3,2],[3,3]],
+    desc: "6セルの静物。対角に伸びた船。" },
+  { name: "Long Boat", category: "still", size: [6,6], period: 1,
+    cells: [[1,1],[1,2],[2,1],[2,3],[3,2],[3,4],[4,3]],
+    desc: "7セルの静物。Boatの延長形。" },
+  { name: "Barge", category: "still", size: [6,6], period: 1,
+    cells: [[1,2],[2,1],[2,3],[3,2],[3,4],[4,3]],
+    desc: "6セルの静物。はしけ。" },
+  { name: "Mango", category: "still", size: [6,7], period: 1,
+    cells: [[1,2],[1,3],[2,1],[2,4],[3,1],[3,5],[4,2],[4,4],[5,3]],
+    desc: "9セルの静物。マンゴー形。" },
+  { name: "Eater 1", category: "still", size: [6,6], period: 1,
+    cells: [[1,1],[1,2],[2,2],[3,2],[3,3],[4,3],[4,4],[5,4]],
+    desc: "グライダーを吸収できる静物。別名 fishhook。" },
+  { name: "Aircraft Carrier", category: "still", size: [6,5], period: 1,
+    cells: [[1,1],[1,2],[2,3],[2,4],[3,1],[4,2],[4,3]],
+    desc: "空母。離れた2つのブロックが安定結合。" },
+  { name: "Snake", category: "still", size: [6,5], period: 1,
+    cells: [[1,1],[1,2],[2,3],[3,3],[4,2],[4,1]],
+    desc: "蛇形の6セル静物。" },
+  { name: "Hat", category: "still", size: [7,5], period: 1,
+    cells: [[1,3],[2,2],[2,4],[3,1],[3,5],[4,2],[4,3],[4,4]],
+    desc: "帽子型。8セルの静物。" },
+
+  // === Oscillators ===
+  { name: "Blinker", category: "oscillator", size: [5,5], period: 2,
+    cells: [[2,1],[2,2],[2,3]],
+    desc: "最小の振動子。周期2で縦横に交互変化。" },
+  { name: "Toad", category: "oscillator", size: [6,6], period: 2,
+    cells: [[2,2],[2,3],[2,4],[3,1],[3,2],[3,3]],
+    desc: "6セルの周期2振動子。ヒキガエル。" },
+  { name: "Beacon", category: "oscillator", size: [8,8], period: 2,
+    cells: [[2,2],[2,3],[3,2],[3,3],[4,4],[4,5],[5,4],[5,5]],
+    desc: "2つのBlockが対角に接して点滅。周期2。" },
+  { name: "Clock", category: "oscillator", size: [8,8], period: 2,
+    cells: [[2,4],[3,2],[3,4],[4,3],[4,5],[5,3]],
+    desc: "時計型。周期2。" },
+  { name: "Pulsar", category: "oscillator", size: [17,17], period: 3,
+    cells: (function(){
+      var c=[];
+      var q=[[2,4],[2,5],[2,6],[4,2],[5,2],[6,2],[4,7],[5,7],[6,7],[7,4],[7,5],[7,6]];
+      for(var i=0;i<q.length;i++){
+        var r=q[i][0],cl=q[i][1];
+        c.push([r,cl],[r,16-cl],[16-r,cl],[16-r,16-cl]);
+      }
+      return c;
+    })(),
+    desc: "最も一般的な周期3振動子。48セル。壮麗な対称パターン。" },
+  { name: "Pentadecathlon", category: "oscillator", size: [11,20], period: 15,
+    cells: [[4,5],[5,5],[6,4],[6,6],[7,5],[8,5],[9,5],[10,5],[11,4],[11,6],[12,5],[13,5]],
+    desc: "周期15の振動子。12セルから始まる長周期パターン。" },
+  { name: "Figure Eight", category: "oscillator", size: [12,12], period: 8,
+    cells: [[2,2],[2,3],[2,4],[3,2],[3,3],[3,4],[4,2],[4,3],[4,4],
+            [5,5],[5,6],[5,7],[6,5],[6,6],[6,7],[7,5],[7,6],[7,7]],
+    desc: "周期8の振動子。2つの3×3ブロックがずれて振動。" },
+  { name: "Octagon 2", category: "oscillator", size: [10,10], period: 5,
+    cells: [[1,3],[1,4],[2,2],[2,5],[3,1],[3,6],[4,1],[4,6],[5,1],[5,6],[6,2],[6,5],[7,3],[7,4]],
+    desc: "周期5の八角形振動子。" },
+  { name: "Tumbler", category: "oscillator", size: [11,11], period: 14,
+    cells: [[2,3],[2,4],[2,6],[2,7],[3,3],[3,4],[3,6],[3,7],[4,4],[4,6],
+            [5,2],[5,4],[5,6],[5,8],[6,2],[6,4],[6,6],[6,8],[7,2],[7,3],[7,7],[7,8]],
+    desc: "周期14の振動子。タンブラー（転がし杯）。" },
+  { name: "Caterer", category: "oscillator", size: [14,14], period: 3,
+    cells: [[4,3],[5,5],[6,2],[6,5],[7,3],[7,4],[7,5],[7,6],[7,7],[7,8],[7,9],[8,2],[8,5],[9,5],[10,3]],
+    desc: "周期3の振動子。ケータラー。15セル。" },
+
+  // === Spaceships ===
+  { name: "Glider", category: "spaceship", size: [20,20], period: 4,
+    cells: [[1,2],[2,3],[3,1],[3,2],[3,3]],
+    desc: "最小の宇宙船。4世代で対角に1セル移動。c/4。" },
+  { name: "LWSS", category: "spaceship", size: [22,12], period: 4,
+    cells: [[2,1],[2,4],[3,5],[4,1],[4,5],[5,2],[5,3],[5,4],[5,5]],
+    desc: "Lightweight Spaceship。水平方向にc/2で移動。9セル。" },
+  { name: "MWSS", category: "spaceship", size: [24,12], period: 4,
+    cells: [[2,3],[3,1],[3,5],[4,6],[5,1],[5,6],[6,2],[6,3],[6,4],[6,5],[6,6]],
+    desc: "Middleweight Spaceship。LWSSより1列幅広い。11セル。" },
+  { name: "HWSS", category: "spaceship", size: [26,12], period: 4,
+    cells: [[2,3],[2,4],[3,1],[3,6],[4,7],[5,1],[5,7],[6,2],[6,3],[6,4],[6,5],[6,6],[6,7]],
+    desc: "Heavyweight Spaceship。最大の基本宇宙船。13セル。" },
+
+  // === Guns ===
+  { name: "Gosper Glider Gun", category: "gun", size: [40,15], period: 30,
+    cells: [
+      [5,1],[5,2],[6,1],[6,2],
+      [3,13],[3,14],[4,12],[4,16],[5,11],[5,17],[6,11],[6,15],[6,17],[6,18],[7,11],[7,17],[8,12],[8,16],[9,13],[9,14],
+      [1,25],[2,23],[2,25],[3,21],[3,22],[4,21],[4,22],[5,21],[5,22],[6,23],[6,25],[7,25],
+      [3,35],[3,36],[4,35],[4,36]
+    ],
+    desc: "最初に発見された銃。周期30でグライダーを射出し続ける。Bill Gosper, 1970。" },
+  { name: "Simkin Glider Gun", category: "gun", size: [36,22], period: 120,
+    cells: [
+      [1,1],[1,2],[2,1],[2,2],[1,5],[1,6],[2,5],[2,6],
+      [4,3],[4,4],[5,3],[5,4],
+      [10,21],[10,22],[11,23],[12,24],[12,25],[13,24],[13,25],
+      [10,28],[10,29],[11,28],[12,29],
+      [18,21],[18,22],[17,23],[16,24],[16,25],[15,24],[15,25],
+      [18,28],[18,29],[17,28],[16,29],
+      [11,33],[11,34],[12,33],[12,34]
+    ],
+    desc: "周期120の銃。Michael Simkin, 2015。Gosper Gunより小型。" },
+
+  // === Methuselahs ===
+  { name: "R-pentomino", category: "methuselah", size: [50,50], period: null,
+    cells: [[23,25],[23,26],[24,24],[24,25],[25,25]],
+    desc: "5セルから1103世代目に安定。6グライダー・静物多数を生成。最も有名なメトセラ。" },
+  { name: "Acorn", category: "methuselah", size: [50,50], period: null,
+    cells: [[23,22],[24,24],[25,21],[25,22],[25,25],[25,26],[25,27]],
+    desc: "7セルから5206世代で安定。13グライダーを生成。" },
+  { name: "Diehard", category: "methuselah", size: [40,40], period: null,
+    cells: [[19,18],[19,19],[20,19],[20,23],[20,24],[20,25],[18,24]],
+    desc: "7セルから130世代で完全消滅する珍しいパターン。" },
+  { name: "B-heptomino", category: "methuselah", size: [40,40], period: null,
+    cells: [[18,19],[19,18],[19,19],[19,20],[20,17],[20,18],[20,20]],
+    desc: "7セルの活発なメトセラ。148世代で安定。" },
+  { name: "Pi-heptomino", category: "methuselah", size: [50,50], period: null,
+    cells: [[23,24],[23,25],[23,26],[24,24],[24,26],[25,24],[25,26]],
+    desc: "π型の7セルパターン。173世代で安定。5個のグライダーを放出。" },
+  { name: "Thunderbird", category: "methuselah", size: [40,40], period: null,
+    cells: [[17,19],[17,20],[17,21],[19,20],[20,20],[21,20]],
+    desc: "十字型の6セルメトセラ。243世代で安定。" },
+  { name: "Rabbits", category: "methuselah", size: [50,50], period: null,
+    cells: [[23,21],[23,22],[23,23],[23,25],[24,21],[25,24],[25,25],[26,22],[26,25],[26,26]],
+    desc: "9セルのメトセラ。17331世代で安定。" },
+  { name: "Herschel", category: "methuselah", size: [40,40], period: null,
+    cells: [[18,20],[19,19],[19,20],[20,20],[21,19],[21,20],[22,19]],
+    desc: "7セルのメトセラ。128世代で安定。Herschelトラックの基本要素。" },
+
+  // === Miscellaneous ===
+  { name: "Infinite Growth 1", category: "misc", size: [50,30], period: null,
+    cells: [[14,7],[14,9],[13,9],[15,12],[15,13],[15,14],[16,12],[16,13],[16,14],[17,13]],
+    desc: "10セルで無限成長するパターン。Switch engine。" },
+  { name: "Puffer Train", category: "misc", size: [30,30], period: null,
+    cells: [
+      [3,14],[4,15],[5,11],[5,15],[6,12],[6,13],[6,14],[6,15],
+      [9,14],[10,15],[11,11],[11,15],[12,12],[12,13],[12,14],[12,15],
+      [16,12],[16,13],[17,11],[17,14],[18,14],[19,11],[19,14],[20,11],[20,12],[20,13]
+    ],
+    desc: "移動しながら残骸を残す「煙」パターン。" },
+  { name: "Garden of Eden (fragment)", category: "misc", size: [14,14], period: null,
+    cells: [[3,5],[3,6],[3,7],[3,8],[4,4],[4,9],[5,3],[5,10],[6,3],[6,10],[7,4],[7,9],[8,5],[8,6],[8,7],[8,8],
+            [5,5],[5,8],[6,5],[6,8],[8,4],[8,9]],
+    desc: "前世代が存在しないパターン。どの初期配置からも到達不能。" },
+  { name: "Spaceship Gun (block-laying)", category: "misc", size: [45,20], period: null,
+    cells: [
+      [5,1],[5,2],[6,1],[6,2],
+      [3,13],[3,14],[4,12],[4,16],[5,11],[5,17],[6,11],[6,15],[6,17],[6,18],[7,11],[7,17],[8,12],[8,16],[9,13],[9,14],
+      [1,25],[2,23],[2,25],[3,21],[3,22],[4,21],[4,22],[5,21],[5,22],[6,23],[6,25],[7,25],
+      [3,35],[3,36],[4,35],[4,36],
+      [9,35],[9,36],[9,37],[10,34],[10,38],[11,34],[11,38],[12,35],[12,36],[12,37]
+    ],
+    desc: "Gosper Gun + 反射パターン。グライダーを衝突させてブロックを配置。" },
+];
+
+function dedupCells(cells) {
+  const s = new Set();
+  return cells.filter(c => { const k = c[0]+','+c[1]; if(s.has(k)) return false; s.add(k); return true; });
+}
+
+PATTERNS.forEach(p => { p.cells = dedupCells(p.cells); });
+
+const CATEGORIES = [
+  { key: 'all', label: 'All' },
+  { key: 'still', label: 'Still Life' },
+  { key: 'oscillator', label: 'Oscillator' },
+  { key: 'spaceship', label: 'Spaceship' },
+  { key: 'gun', label: 'Gun' },
+  { key: 'methuselah', label: 'Methuselah' },
+  { key: 'misc', label: 'Other' },
+];
+
+let activeFilter = 'all';
+const controlsEl = document.getElementById('controls');
+const gridEl = document.getElementById('grid');
+const simulations = [];
+let animFrame;
+
+CATEGORIES.forEach(cat => {
+  const btn = document.createElement('button');
+  btn.className = 'filter-btn' + (cat.key === 'all' ? ' active' : '');
+  btn.textContent = cat.label;
+  btn.onclick = () => {
+    activeFilter = cat.key;
+    controlsEl.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderGrid();
+  };
+  controlsEl.appendChild(btn);
+});
+
+function createGrid(rows, cols) {
+  const g = new Uint8Array(rows * cols);
+  return g;
+}
+
+function step(grid, rows, cols) {
+  const next = new Uint8Array(rows * cols);
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      let n = 0;
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          if (dr === 0 && dc === 0) continue;
+          const nr = (r + dr + rows) % rows;
+          const nc = (c + dc + cols) % cols;
+          n += grid[nr * cols + nc];
+        }
+      }
+      const alive = grid[r * cols + c];
+      next[r * cols + c] = (alive && (n === 2 || n === 3)) || (!alive && n === 3) ? 1 : 0;
+    }
+  }
+  return next;
+}
+
+function renderCanvas(canvas, grid, rows, cols, cellSize) {
+  const ctx = canvas.getContext('2d');
+  const style = getComputedStyle(document.documentElement);
+  const alive = style.getPropertyValue('--cell-alive').trim();
+  const dead = style.getPropertyValue('--cell-dead').trim();
+  const gridC = style.getPropertyValue('--cell-grid').trim();
+
+  ctx.fillStyle = dead;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = gridC;
+  for (let r = 0; r <= rows; r++) {
+    ctx.fillRect(0, r * cellSize, cols * cellSize, 1);
+  }
+  for (let c = 0; c <= cols; c++) {
+    ctx.fillRect(c * cellSize, 0, 1, rows * cellSize);
+  }
+
+  ctx.fillStyle = alive;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (grid[r * cols + c]) {
+        ctx.fillRect(c * cellSize + 1, r * cellSize + 1, cellSize - 1, cellSize - 1);
+      }
+    }
+  }
+}
+
+function renderGrid() {
+  cancelAnimationFrame(animFrame);
+  simulations.length = 0;
+  gridEl.innerHTML = '';
+
+  const filtered = activeFilter === 'all' ? PATTERNS : PATTERNS.filter(p => p.category === activeFilter);
+
+  filtered.forEach(pat => {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const rows = pat.size[1];
+    const cols = pat.size[0];
+    const cellSize = Math.max(3, Math.min(8, Math.floor(220 / Math.max(rows, cols))));
+    const canvas = document.createElement('canvas');
+    canvas.width = cols * cellSize;
+    canvas.height = rows * cellSize;
+    canvas.style.aspectRatio = cols + '/' + rows;
+
+    let grid = createGrid(rows, cols);
+    pat.cells.forEach(([r, c]) => {
+      if (r < rows && c < cols) grid[r * cols + c] = 1;
+    });
+
+    const initGrid = new Uint8Array(grid);
+
+    const sim = {
+      canvas, grid, rows, cols, cellSize, pat,
+      initGrid, paused: false, stepCount: 0,
+      maxSteps: pat.category === 'methuselah' ? 800 : pat.category === 'misc' ? 500 : 200
+    };
+
+    renderCanvas(canvas, grid, rows, cols, cellSize);
+    card.appendChild(canvas);
+
+    const info = document.createElement('div');
+    info.className = 'card-info';
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'card-name';
+    nameEl.textContent = pat.name;
+    info.appendChild(nameEl);
+
+    const meta = document.createElement('div');
+    meta.className = 'card-meta';
+
+    const tag = document.createElement('span');
+    tag.className = 'card-tag tag-' + pat.category;
+    tag.textContent = pat.category === 'still' ? 'Still Life' :
+                      pat.category === 'oscillator' ? 'Oscillator' :
+                      pat.category === 'spaceship' ? 'Spaceship' :
+                      pat.category === 'gun' ? 'Gun' :
+                      pat.category === 'methuselah' ? 'Methuselah' : 'Other';
+    meta.appendChild(tag);
+
+    if (pat.period) {
+      const per = document.createElement('span');
+      per.textContent = 'Period ' + pat.period;
+      meta.appendChild(per);
+    }
+
+    const cellCount = document.createElement('span');
+    cellCount.textContent = pat.cells.length + ' cells';
+    meta.appendChild(cellCount);
+
+    info.appendChild(meta);
+
+    const desc = document.createElement('div');
+    desc.className = 'card-desc';
+    desc.textContent = pat.desc;
+    info.appendChild(desc);
+
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+
+    const pauseBtn = document.createElement('button');
+    pauseBtn.className = 'card-btn';
+    pauseBtn.textContent = '⏸ pause';
+    pauseBtn.onclick = () => {
+      sim.paused = !sim.paused;
+      pauseBtn.textContent = sim.paused ? '▶ play' : '⏸ pause';
+      canvas.style.opacity = sim.paused ? '0.7' : '1';
+    };
+    actions.appendChild(pauseBtn);
+
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'card-btn';
+    resetBtn.textContent = '↺ reset';
+    resetBtn.onclick = () => {
+      sim.grid = new Uint8Array(sim.initGrid);
+      sim.stepCount = 0;
+      sim.paused = false;
+      pauseBtn.textContent = '⏸ pause';
+      canvas.style.opacity = '1';
+      renderCanvas(sim.canvas, sim.grid, sim.rows, sim.cols, sim.cellSize);
+    };
+    actions.appendChild(resetBtn);
+
+    const stepBtn = document.createElement('button');
+    stepBtn.className = 'card-btn';
+    stepBtn.textContent = '→ step';
+    stepBtn.onclick = () => {
+      sim.paused = true;
+      pauseBtn.textContent = '▶ play';
+      canvas.style.opacity = '0.7';
+      sim.grid = step(sim.grid, sim.rows, sim.cols);
+      sim.stepCount++;
+      renderCanvas(sim.canvas, sim.grid, sim.rows, sim.cols, sim.cellSize);
+    };
+    actions.appendChild(stepBtn);
+
+    info.appendChild(actions);
+
+    card.appendChild(info);
+    gridEl.appendChild(card);
+
+    simulations.push(sim);
+  });
+
+  let lastTime = 0;
+  const interval = 120;
+
+  function animate(time) {
+    if (time - lastTime > interval) {
+      lastTime = time;
+      simulations.forEach(sim => {
+        if (sim.paused) return;
+        if (sim.pat.period === 1) return;
+        if (sim.stepCount >= sim.maxSteps) {
+          sim.grid = new Uint8Array(sim.initGrid);
+          sim.stepCount = 0;
+        }
+        sim.grid = step(sim.grid, sim.rows, sim.cols, sim.cellSize);
+        sim.stepCount++;
+        renderCanvas(sim.canvas, sim.grid, sim.rows, sim.cols, sim.cellSize);
+      });
+    }
+    animFrame = requestAnimationFrame(animate);
+  }
+  animFrame = requestAnimationFrame(animate);
+}
+
+renderGrid();
+
+// ═══ Wallpaper Configs section ════════════════════════════════════════
+// CONFIGS:BEGIN (run.sh atlas がここに config/*.json を埋め込む。手で書き換えない)
+const CONFIGS = [];
+// CONFIGS:END
+
+// lifewallpaper/life.py の PRESETS と同一形状（'O' = alive）
+const CFG_PRESETS = {
+  "glider": [".O.", "..O", "OOO"],
+  "r-pentomino": [".OO", "OO.", ".O."],
+  "acorn": [".O.....", "...O...", "OO..OOO"],
+  "pulsar": [
+    "..OOO...OOO..",
+    ".............",
+    "O....O.O....O",
+    "O....O.O....O",
+    "O....O.O....O",
+    "..OOO...OOO..",
+    ".............",
+    "..OOO...OOO..",
+    "O....O.O....O",
+    "O....O.O....O",
+    "O....O.O....O",
+    ".............",
+    "..OOO...OOO..",
+  ],
+  "pentadecathlon": ["..O....O..", "OO.OOOO.OO", "..O....O.."],
+};
+(function buildGun() {
+  const rows = Array.from({length: 11}, () => Array(38).fill('.'));
+  const cells = [
+    [5,1],[5,2],[6,1],[6,2],
+    [3,13],[3,14],[4,12],[4,16],[5,11],[5,17],[6,11],[6,15],[6,17],[6,18],
+    [7,11],[7,17],[8,12],[8,16],[9,13],[9,14],
+    [1,25],[2,23],[2,25],[3,21],[3,22],[4,21],[4,22],[5,21],[5,22],
+    [6,23],[6,25],[7,25],
+    [3,35],[3,36],[4,35],[4,36],
+  ];
+  cells.forEach(([r,c]) => { rows[r][c] = 'O'; });
+  CFG_PRESETS["gosper-glider-gun"] = rows.map(r => r.join(''));
+})();
+
+function parsePreset(strRows) {
+  const h = strRows.length, w = strRows[0].length;
+  const cells = [];
+  for (let r = 0; r < h; r++)
+    for (let c = 0; c < w; c++)
+      if (strRows[r][c] === 'O') cells.push([r, c]);
+  return { h, w, cells };
+}
+
+function rotateCW(p) {  // np.rot90(x, -1) 相当
+  return { h: p.w, w: p.h, cells: p.cells.map(([r, c]) => [c, p.h - 1 - r]) };
+}
+function mirrorV(p) {   // np.flip(x, 0) 相当
+  return { h: p.h, w: p.w, cells: p.cells.map(([r, c]) => [p.h - 1 - r, c]) };
+}
+
+function placementOrigin(p, pos, rows, cols) {
+  if (pos === undefined || pos === "center")
+    return [Math.floor(rows/2) - Math.floor(p.h/2), Math.floor(cols/2) - Math.floor(p.w/2)];
+  if (Array.isArray(pos)) return pos;
+  if (pos === "top-left") return [5, 5];
+  if (pos === "top-right") return [5, cols - p.w - 5];
+  if (pos === "bottom-left") return [rows - p.h - 5, 5];
+  if (pos === "bottom-right") return [rows - p.h - 5, cols - p.w - 5];
+  return [0, 0];
+}
+
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return function() {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const PALETTE_FG = {  // color_by_motif なし config の代表色
+  ember: [220, 100, 20], cyanotype: [30, 130, 200],
+  phosphor: [30, 180, 100], mono: [140, 140, 145],
+};
+
+// ── モチーフ認識（lifewallpaper/motifs.py と同一ロジック）─────────────────────────
+// 各世代のセル群を既知モチーフ辞書（全位相×8対称）と照合して色分けする。
+const MOTIF_DEFS = {
+  "block": ["OO", "OO"],
+  "beehive": [".OO.", "O..O", ".OO."],
+  "loaf": [".OO.", "O..O", ".O.O", "..O."],
+  "boat": ["OO.", "O.O", ".O."],
+  "tub": [".O.", "O.O", ".O."],
+  "pond": [".OO.", "O..O", "O..O", ".OO."],
+  "ship": ["OO.", "O.O", ".OO"],
+  "long-boat": ["OO..", "O.O.", ".O.O", "..O."],
+  "barge": [".O..", "O.O.", ".O.O", "..O."],
+  "snake": ["OO.O", "O.OO"],
+  "eater": ["OO..", "O...", ".OOO", "...O"],
+  "ship-tie": ["....OO", "...O.O", "...OO.", ".OO...", "O.O...", "OO...."],
+  "long-ship": ["..OO", ".O.O", "O.O.", "OO.."],
+  "mango": ["..OO.", ".O..O", "O..O.", ".OO.."],
+  "blinker": ["OOO"],
+  "toad": [".OOO", "OOO."],
+  "beacon": ["OO..", "OO..", "..OO", "..OO"],
+  "clock": ["..O.", "O.O.", ".O.O", ".O.."],
+  "pulsar": CFG_PRESETS["pulsar"],
+  "pentadecathlon": CFG_PRESETS["pentadecathlon"],
+  "glider": CFG_PRESETS["glider"],
+  "lwss": ["O..O.", "....O", "O...O", ".OOOO"],
+  "mwss": ["..O...", "O...O.", ".....O", "O....O", ".OOOOO"],
+  "hwss": ["..OO...", "O....O.", "......O", "O.....O", ".OOOOOO"],
+};
+
+const MOTIF_COLORS = {
+  "chaos": [100, 105, 120],
+  "block": [96, 140, 235], "beehive": [235, 190, 90], "loaf": [210, 150, 100],
+  "boat": [90, 200, 185], "tub": [140, 185, 240], "pond": [95, 220, 220],
+  "ship": [175, 145, 235], "long-boat": [110, 175, 215], "barge": [150, 205, 255],
+  "snake": [195, 180, 120], "eater": [130, 150, 170],
+  "ship-tie": [255, 140, 180], "long-ship": [150, 130, 255], "mango": [170, 230, 90],
+  "blinker": [255, 150, 60], "toad": [255, 115, 95], "beacon": [230, 95, 200],
+  "clock": [200, 120, 160], "pulsar": [255, 220, 95], "pentadecathlon": [185, 115, 255],
+  "glider": [95, 235, 130], "lwss": [70, 200, 255], "mwss": [50, 170, 250], "hwss": [40, 140, 245],
+  "stable": [235, 235, 245],
+};
+
+const MOTIF_ORDER = ["chaos"].concat(Object.keys(MOTIF_DEFS), ["stable"]);  // id 1=chaos, 2〜=既知, 末尾=stable
+
+// 距離2連結（パルサーのような隙間つき振動子も1群に）
+const NEIGH2 = [];
+for (let dr = -2; dr <= 2; dr++)
+  for (let dc = -2; dc <= 2; dc++)
+    if (dr !== 0 || dc !== 0) NEIGH2.push([dr, dc]);
+
+function groupCells(grid, rows, cols) {
+  const visited = new Uint8Array(rows * cols);
+  const groups = [];
+  for (let s = 0; s < grid.length; s++) {
+    if (!grid[s] || visited[s]) continue;
+    const stack = [s];
+    visited[s] = 1;
+    const comp = [];
+    while (stack.length) {
+      const i = stack.pop();
+      comp.push(i);
+      const r = Math.floor(i / cols), c = i % cols;
+      for (const [dr, dc] of NEIGH2) {
+        const j = ((r + dr + rows) % rows) * cols + ((c + dc + cols) % cols);
+        if (grid[j] && !visited[j]) { visited[j] = 1; stack.push(j); }
+      }
+    }
+    groups.push(comp);
+  }
+  return groups;
+}
+
+function compBitmap(comp, rows, cols) {
+  let rs = comp.map(i => Math.floor(i / cols));
+  let cs = comp.map(i => i % cols);
+  if (Math.max(...rs) - Math.min(...rs) > rows / 2)
+    rs = rs.map(r => r < rows / 2 ? r + rows : r);
+  if (Math.max(...cs) - Math.min(...cs) > cols / 2)
+    cs = cs.map(c => c < cols / 2 ? c + cols : c);
+  const r0 = Math.min(...rs), c0 = Math.min(...cs);
+  const h = Math.max(...rs) - r0 + 1, w = Math.max(...cs) - c0 + 1;
+  if (h > 20 || w > 20) return null;
+  const bits = new Uint8Array(h * w);
+  for (let k = 0; k < comp.length; k++)
+    bits[(rs[k] - r0) * w + (cs[k] - c0)] = 1;
+  return { h, w, bits };
+}
+
+function bitmapKey(bm) { return bm.h + 'x' + bm.w + ':' + bm.bits.join(''); }
+
+function bitmapVariants(bm) {
+  const out = [];
+  let a = { h: bm.h, w: bm.w, bits: bm.bits };
+  for (let k = 0; k < 4; k++) {
+    for (const m of [a, flipBitmap(a)]) out.push(bitmapKey(m));
+    a = rotBitmap(a);
+  }
+  return out;
+}
+function rotBitmap(a) {  // 反時計回り90°（対称群を全列挙するので向きは不問）
+  const bits = new Uint8Array(a.h * a.w);
+  for (let r = 0; r < a.h; r++)
+    for (let c = 0; c < a.w; c++)
+      bits[(a.w - 1 - c) * a.h + r] = a.bits[r * a.w + c];
+  return { h: a.w, w: a.h, bits };
+}
+function flipBitmap(a) {
+  const bits = new Uint8Array(a.h * a.w);
+  for (let r = 0; r < a.h; r++)
+    for (let c = 0; c < a.w; c++)
+      bits[(a.h - 1 - r) * a.w + c] = a.bits[r * a.w + c];
+  return { h: a.h, w: a.w, bits };
+}
+
+const MOTIF_SIGS = (function build() {
+  const sigs = new Map();
+  Object.entries(MOTIF_DEFS).forEach(([name, art], idx) => {
+    const mid = idx + 2;  // 0=dead, 1=chaos
+    let g = new Uint8Array(48 * 48);
+    art.forEach((row, r) => {
+      for (let c = 0; c < row.length; c++)
+        if (row[c] === 'O') g[(16 + r) * 48 + 16 + c] = 1;
+    });
+    for (let gen = 0; gen < 33; gen++) {
+      groupCells(g, 48, 48).forEach(comp => {
+        const bm = compBitmap(comp, 48, 48);
+        if (!bm) return;
+        bitmapVariants(bm).forEach(key => { if (!sigs.has(key)) sigs.set(key, mid); });
+      });
+      g = step(g, 48, 48);
+    }
+  });
+  return sigs;
+})();
+
+// 距離2連結の群を 8 近傍（距離1）連結のパーツに分ける（lifewallpaper/motifs.py の _split_touching と同じ）
+function split8(comp, rows, cols) {
+  const cells = new Set(comp), seen = new Set(), parts = [];
+  for (const s of comp) {
+    if (seen.has(s)) continue;
+    const stack = [s];
+    seen.add(s);
+    const part = [];
+    while (stack.length) {
+      const i = stack.pop();
+      part.push(i);
+      const r = Math.floor(i / cols), c = i % cols;
+      for (let dr = -1; dr <= 1; dr++)
+        for (let dc = -1; dc <= 1; dc++) {
+          const j = ((r + dr + rows) % rows) * cols + ((c + dc + cols) % cols);
+          if (cells.has(j) && !seen.has(j)) { seen.add(j); stack.push(j); }
+        }
+    }
+    parts.push(part);
+  }
+  return parts;
+}
+
+// 群を単独で置き、30 世代以内に元の形・位置へ戻るか（lifewallpaper/motifs.py の _is_stable と同じ）
+const STABLE_CACHE = new Map();
+function isStable(bm) {
+  const key = bitmapVariants(bm).sort()[0];
+  if (STABLE_CACHE.has(key)) return STABLE_CACHE.get(key);
+  const P = 32, H = bm.h + 2 * P, W = bm.w + 2 * P;
+  const g0 = new Uint8Array(H * W);
+  for (let r = 0; r < bm.h; r++)
+    for (let c = 0; c < bm.w; c++) g0[(r + P) * W + c + P] = bm.bits[r * bm.w + c];
+  let cur = g0, ok = false;
+  for (let k = 0; k < 30; k++) {
+    cur = step(cur, H, W);
+    let any = false, same = true;
+    for (let i = 0; i < cur.length; i++) {
+      if (cur[i]) any = true;
+      if (cur[i] !== g0[i]) same = false;
+    }
+    if (!any) break;
+    if (same) { ok = true; break; }
+  }
+  STABLE_CACHE.set(key, ok);
+  return ok;
+}
+
+// 判定順は lifewallpaper/motifs.py の classify と同じ: 辞書一致 → パーツが全部辞書一致 → 単独で安定 → chaos
+function classifyJS(grid, rows, cols) {
+  const out = new Uint8Array(rows * cols);
+  const STABLE_ID = MOTIF_ORDER.length;  // id = MOTIF_ORDER の index + 1
+  groupCells(grid, rows, cols).forEach(comp => {
+    const bm = compBitmap(comp, rows, cols);
+    const mid = bm ? MOTIF_SIGS.get(bitmapKey(bm)) : undefined;
+    if (mid) { for (const i of comp) out[i] = mid; return; }
+    const parts = split8(comp, rows, cols);
+    if (parts.length >= 2) {
+      const pm = parts.map(p => {
+        const b = compBitmap(p, rows, cols);
+        return b ? MOTIF_SIGS.get(bitmapKey(b)) : undefined;
+      });
+      if (pm.every(Boolean)) {
+        parts.forEach((p, k) => { for (const i of p) out[i] = pm[k]; });
+        return;
+      }
+    }
+    const id = (bm && isStable(bm)) ? STABLE_ID : 1;
+    for (const i of comp) out[i] = id;
+  });
+  return out;
+}
+
+// lifewallpaper/life.py の build_initial_state と同じロジック（プレビュー用縮小グリッド）
+function buildConfigGrid(cfg, rows, cols) {
+  const grid = new Uint8Array(rows * cols);
+  const rng = mulberry32(42);
+  const density = cfg.random_density || 0;
+  if (density > 0)
+    for (let i = 0; i < grid.length; i++)
+      if (rng() < density) grid[i] = 1;
+
+  (cfg.patterns || []).forEach(pl => {
+    let p = parsePreset(CFG_PRESETS[pl.name]);
+    for (let t = 0; t < (pl.rotate || 0); t++) p = rotateCW(p);
+    if (pl.mirror) p = mirrorV(p);
+    const [r0, c0] = placementOrigin(p, pl.position, rows, cols);
+    p.cells.forEach(([r, c]) => {
+      grid[(((r0 + r) % rows + rows) % rows) * cols + (((c0 + c) % cols + cols) % cols)] = 1;
+    });
+  });
+
+  // scatter: プレビューは縮小グリッドなので種数を実盤面との面積比でスケール
+  const cell = cfg.cell_size || 8;
+  const realCells = Math.floor(3024 / cell) * Math.floor(1964 / cell);
+  const areaScale = (rows * cols) / realCells;
+  (cfg.scatter || []).forEach(sc => {
+    const base = parsePreset(CFG_PRESETS[sc.name]);
+    const n = sc.per_10k !== undefined
+      ? Math.max(1, Math.round(sc.per_10k * rows * cols / 10000))
+      : Math.max(1, Math.round((sc.count || 1) * areaScale));
+    for (let k = 0; k < n; k++) {
+      let p = base;
+      const rot = Math.floor(rng() * 4);
+      for (let t = 0; t < rot; t++) p = rotateCW(p);
+      if (rng() < 0.5) p = mirrorV(p);
+      const r0 = Math.floor(rng() * rows), c0 = Math.floor(rng() * cols);
+      p.cells.forEach(([r, c]) => {
+        grid[((r0 + r) % rows) * cols + ((c0 + c) % cols)] = 1;
+      });
+    }
+  });
+  return grid;
+}
+
+function renderConfigCanvas(sim) {
+  const d = sim.img.data;
+  const [br, bg2, bb] = sim.bg;
+  for (let i = 0; i < sim.trail.length; i++) {
+    const t = sim.trail[i];
+    const col = t > 0 ? sim.lut[sim.lastLabel[i]] : sim.bg;
+    d[i*4]   = br + t * (col[0] - br);
+    d[i*4+1] = bg2 + t * (col[1] - bg2);
+    d[i*4+2] = bb + t * (col[2] - bb);
+    d[i*4+3] = 255;
+  }
+  sim.ctx.putImageData(sim.img, 0, 0);
+}
+
+const configSims = [];
+
+function renderMotifLegend() {
+  const el = document.getElementById('motifLegend');
+  MOTIF_ORDER.forEach(name => {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    const sw = document.createElement('span');
+    sw.className = 'sw';
+    sw.style.background = 'rgb(' + MOTIF_COLORS[name].join(',') + ')';
+    chip.appendChild(sw);
+    chip.appendChild(document.createTextNode(name));
+    el.appendChild(chip);
+  });
+}
+
+function renderConfigGrid() {
+  const el = document.getElementById('configGrid');
+  const PREVIEW_COLS = 192;
+  const PREVIEW_ROWS = Math.round(PREVIEW_COLS * 1964 / 3024);  // macbook aspect
+
+  CONFIGS.forEach(cfg => {
+    const rows = PREVIEW_ROWS, cols = PREVIEW_COLS;
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const canvas = document.createElement('canvas');
+    canvas.width = cols;
+    canvas.height = rows;
+    canvas.style.aspectRatio = cols + '/' + rows;
+    card.appendChild(canvas);
+
+    const grid = buildConfigGrid(cfg, rows, cols);
+    const bg = cfg.bg_color || [10, 10, 12];
+    let lut;
+    if (cfg.color_by_motif) {
+      const overrides = cfg.motif_colors || {};
+      lut = [bg].concat(MOTIF_ORDER.map(n => overrides[n] || MOTIF_COLORS[n]));
+    } else {
+      const fg = cfg.fg_color || PALETTE_FG[cfg.palette || "ember"];
+      lut = [bg].concat(MOTIF_ORDER.map(() => fg));
+    }
+    const gif = cfg.gif || {};
+    const initMM = cfg.color_by_motif ? classifyJS(grid, rows, cols) : grid;
+    const sim = {
+      cfg, rows, cols, lut, bg,
+      grid,
+      initGrid: new Uint8Array(grid),
+      lastLabel: new Uint8Array(initMM),
+      trail: Float32Array.from(grid, v => v > 0 ? 1 : 0),
+      decay: gif.trail || 0,
+      stepCount: 0,
+      maxSteps: gif.generations || Math.min(cfg.steps || 300, 400),
+      paused: false,
+      ctx: canvas.getContext('2d'),
+      img: null, canvas,
+    };
+    sim.img = sim.ctx.createImageData(cols, rows);
+    renderConfigCanvas(sim);
+
+    const info = document.createElement('div');
+    info.className = 'card-info';
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'card-name';
+    nameEl.textContent = cfg.name + '  ·  ' + cfg._file;
+    info.appendChild(nameEl);
+
+    const meta = document.createElement('div');
+    meta.className = 'card-meta';
+    const modeTag = document.createElement('span');
+    modeTag.className = 'card-tag tag-mode';
+    modeTag.textContent = cfg.mode;
+    meta.appendChild(modeTag);
+    if (cfg.color_by_motif) {
+      const mt = document.createElement('span');
+      mt.className = 'card-tag tag-motif';
+      mt.textContent = 'motif colors';
+      meta.appendChild(mt);
+    }
+    if (cfg.gif) {
+      const gt = document.createElement('span');
+      gt.className = 'card-tag tag-gif';
+      gt.textContent = 'GIF';
+      meta.appendChild(gt);
+    }
+    const stepsEl = document.createElement('span');
+    stepsEl.textContent = (cfg.steps || 0) + ' steps · cell ' + (cfg.cell_size || 8) + 'px';
+    meta.appendChild(stepsEl);
+    info.appendChild(meta);
+
+    const desc = document.createElement('div');
+    desc.className = 'card-desc';
+    const parts = [];
+    if (cfg.random_density) parts.push('random ' + (cfg.random_density * 100).toFixed(0) + '%');
+    if (cfg.patterns && cfg.patterns.length) {
+      const counts = {};
+      cfg.patterns.forEach(p => { counts[p.name] = (counts[p.name] || 0) + 1; });
+      parts.push(Object.entries(counts).map(([n, k]) => k > 1 ? n + '×' + k : n).join(', '));
+    }
+    if (cfg.palette && !cfg.color_by_motif) parts.push('palette: ' + cfg.palette);
+    desc.textContent = parts.join(' · ') || '—';
+    info.appendChild(desc);
+
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+    const pauseBtn = document.createElement('button');
+    pauseBtn.className = 'card-btn';
+    pauseBtn.textContent = '⏸ pause';
+    pauseBtn.onclick = () => {
+      sim.paused = !sim.paused;
+      pauseBtn.textContent = sim.paused ? '▶ play' : '⏸ pause';
+      canvas.style.opacity = sim.paused ? '0.7' : '1';
+    };
+    actions.appendChild(pauseBtn);
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'card-btn';
+    resetBtn.textContent = '↺ reset';
+    resetBtn.onclick = () => {
+      sim.grid = new Uint8Array(sim.initGrid);
+      sim.lastLabel = new Uint8Array(
+        sim.cfg.color_by_motif ? classifyJS(sim.grid, sim.rows, sim.cols) : sim.grid);
+      sim.trail = Float32Array.from(sim.grid, v => v > 0 ? 1 : 0);
+      sim.stepCount = 0;
+      sim.paused = false;
+      pauseBtn.textContent = '⏸ pause';
+      canvas.style.opacity = '1';
+      renderConfigCanvas(sim);
+    };
+    actions.appendChild(resetBtn);
+    info.appendChild(actions);
+
+    const cmd = document.createElement('div');
+    cmd.className = 'cfg-cmd';
+    cmd.textContent = './run.sh generate --config ' + cfg._file + (cfg.gif ? ' --gif' : '');
+    info.appendChild(cmd);
+
+    canvas.onclick = () => pauseBtn.onclick();
+
+    card.appendChild(info);
+    el.appendChild(card);
+    configSims.push(sim);
+  });
+
+  let last = 0;
+  function animateConfigs(time) {
+    if (time - last > 100) {
+      last = time;
+      configSims.forEach(sim => {
+        if (sim.paused) return;
+        if (sim.stepCount >= sim.maxSteps) {
+          sim.grid = new Uint8Array(sim.initGrid);
+          sim.lastLabel = new Uint8Array(
+            sim.cfg.color_by_motif ? classifyJS(sim.grid, sim.rows, sim.cols) : sim.grid);
+          sim.trail = Float32Array.from(sim.grid, v => v > 0 ? 1 : 0);
+          sim.stepCount = 0;
+        }
+        sim.grid = step(sim.grid, sim.rows, sim.cols);
+        sim.stepCount++;
+        const mm = sim.cfg.color_by_motif ? classifyJS(sim.grid, sim.rows, sim.cols) : sim.grid;
+        for (let i = 0; i < sim.grid.length; i++) {
+          if (sim.grid[i]) {
+            sim.lastLabel[i] = mm[i];
+            sim.trail[i] = 1;
+          } else {
+            sim.trail[i] = sim.decay > 0 ? sim.trail[i] * sim.decay : 0;
+          }
+        }
+        renderConfigCanvas(sim);
+      });
+    }
+    requestAnimationFrame(animateConfigs);
+  }
+  requestAnimationFrame(animateConfigs);
+}
+
+renderMotifLegend();
+renderConfigGrid();
+
+const observer = new MutationObserver(() => {
+  simulations.forEach(sim => {
+    renderCanvas(sim.canvas, sim.grid, sim.rows, sim.cols, sim.cellSize);
+  });
+});
+observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  simulations.forEach(sim => {
+    renderCanvas(sim.canvas, sim.grid, sim.rows, sim.cols, sim.cellSize);
+  });
+});
+</script>

@@ -1,0 +1,14 @@
+{
+  "name": "motif_heatmap",
+  "cell_size": 4,
+  "mode": "activity",
+  "steps": 25,
+  "random_density": 0.0,
+  "color_by_motif": true,
+  "bg_color": [10, 10, 14],
+  "motif_colors": {"glider": [255, 0, 0]},
+  "scatter": [
+    {"name": "r-pentomino", "count": 6},
+    {"name": "pulsar", "count": 2}
+  ]
+}
