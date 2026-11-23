@@ -1,6 +1,9 @@
 {
   "name": "life-wallpaper",
-  "owner": { "name": "nhoribee" },
+  "owner": {
+    "name": "nhoribee"
+  },
+  "description": "Conway's Game of Life wallpapers for every connected display (macOS).",
   "plugins": [
     {
       "name": "life-wallpaper",

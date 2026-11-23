@@ -2,9 +2,17 @@
   "name": "life-wallpaper",
   "version": "0.1.0",
   "description": "Generate Conway's Game of Life wallpapers sized to each connected display and set them on macOS.",
-  "author": { "name": "nhoribee" },
+  "author": {
+    "name": "nhoribee"
+  },
   "homepage": "https://github.com/nhoribee/life-wallpaper",
   "repository": "https://github.com/nhoribee/life-wallpaper",
   "license": "MIT",
-  "keywords": ["wallpaper", "game-of-life", "cellular-automata", "macos"]
+  "keywords": [
+    "wallpaper",
+    "game-of-life",
+    "cellular-automata",
+    "macos"
+  ],
+  "icon": ".claude-plugin/icon.png"
 }
