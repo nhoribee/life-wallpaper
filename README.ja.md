@@ -8,7 +8,7 @@
 | | |
 |---|---|
 | ![05_motif_colors_heatmap](docs/images/motif-colors-heatmap.png) | ![02_random_heatmap](docs/images/random-heatmap.png) |
-| `05_motif_colors_heatmap`：グライダー銃と振動子を、モチーフごとに色分けしたもの | `02_random_heatmap`：セルが生きていた時間の長さを濃淡で表したもの |
+| `05_motif_colors_heatmap`：4つのグライダー銃と1つのパルサー。セルが生きていた回数を、モチーフごとの色で塗ったもの | `02_random_heatmap`：ランダムな初期配置。500世代のうちセルが生きていた回数を、濃淡で表したもの |
 | ![eca02_chaos_rule30](docs/images/eca-rule30.png) | ![eca03_class4_rule110](docs/images/eca-rule110.png) |
 | `eca02_chaos_rule30`：1次元のセルオートマトン、ルール30 | `eca03_class4_rule110`：1次元のセルオートマトン、ルール110 |
 

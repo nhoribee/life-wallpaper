@@ -11,7 +11,7 @@ resolution, and sets it as that display's desktop picture (macOS).
 | | |
 |---|---|
 | ![05_motif_colors_heatmap](docs/images/motif-colors-heatmap.png) | ![02_random_heatmap](docs/images/random-heatmap.png) |
-| `05_motif_colors_heatmap` — glider guns and oscillators, coloured by motif | `02_random_heatmap` — how long each cell stayed alive |
+| `05_motif_colors_heatmap` — four Gosper glider guns and a pulsar, activity coloured by motif | `02_random_heatmap` — random soup; brightness = how often each cell was alive over 500 generations |
 | ![eca02_chaos_rule30](docs/images/eca-rule30.png) | ![eca03_class4_rule110](docs/images/eca-rule110.png) |
 | `eca02_chaos_rule30` — elementary CA, rule 30 | `eca03_class4_rule110` — elementary CA, rule 110 |
 
