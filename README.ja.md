@@ -3,6 +3,17 @@
 ライフゲーム（Conway）と1次元のセルオートマトン（Wolfram のルール）で、デスクトップの壁紙の画像、GIF、動画を作るツールです。
 `apply` は、接続中の画面ごとに、その画面の解像度（物理ピクセル）で画像を1枚作り、その画面の壁紙に設定します（macOS）。
 
+![既定の壁紙: 10_motif_field_hires_t1500](docs/images/motif-field-t1500.png)
+
+| | |
+|---|---|
+| ![05_motif_colors_heatmap](docs/images/motif-colors-heatmap.png) | ![02_random_heatmap](docs/images/random-heatmap.png) |
+| `05_motif_colors_heatmap`：グライダー銃と振動子を、モチーフごとに色分けしたもの | `02_random_heatmap`：セルが生きていた時間の長さを濃淡で表したもの |
+| ![eca02_chaos_rule30](docs/images/eca-rule30.png) | ![eca03_class4_rule110](docs/images/eca-rule110.png) |
+| `eca02_chaos_rule30`：1次元のセルオートマトン、ルール30 | `eca03_class4_rule110`：1次元のセルオートマトン、ルール110 |
+
+いちばん上の画像は、`apply` の既定の設定（`10_motif_field_hires_t1500`）で作ったものです。どれも 1600x1000、seed 42 で作りました。
+
 ## 入れ方
 
 Claude Code のプラグインとして入れる場合は、次の2行を実行します。

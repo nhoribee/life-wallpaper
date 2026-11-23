@@ -6,6 +6,17 @@ resolution, and sets it as that display's desktop picture (macOS).
 
 [日本語の README](README.ja.md)
 
+![Default wallpaper: 10_motif_field_hires_t1500](docs/images/motif-field-t1500.png)
+
+| | |
+|---|---|
+| ![05_motif_colors_heatmap](docs/images/motif-colors-heatmap.png) | ![02_random_heatmap](docs/images/random-heatmap.png) |
+| `05_motif_colors_heatmap` — glider guns and oscillators, coloured by motif | `02_random_heatmap` — how long each cell stayed alive |
+| ![eca02_chaos_rule30](docs/images/eca-rule30.png) | ![eca03_class4_rule110](docs/images/eca-rule110.png) |
+| `eca02_chaos_rule30` — elementary CA, rule 30 | `eca03_class4_rule110` — elementary CA, rule 110 |
+
+The top image is the default for `apply` (`10_motif_field_hires_t1500`). All samples are 1600x1000, seed 42.
+
 ## Install
 
 ### As a Claude Code plugin
